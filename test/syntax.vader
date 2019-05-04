@@ -1,0 +1,43 @@
+Execute:
+  filetype plugin on
+  syntax enable
+
+"
+" =========================================================
+"
+
+Given pie (Single-line JSON):
+  GET /url
+  { "cargo": 42 }
+
+Execute (Verify embedded JSON syntax):
+  AssertEqual 'pie', &ft
+  AssertEqual 'pieHttpVerb', SyntaxAt(1, 2)
+  AssertEqual 'jsonKeyword', SyntaxAt(2, 4)
+
+"
+" =========================================================
+"
+
+Given pie (Multi-line JSON):
+  GET /url
+  {
+    "cargo": 42
+  }
+
+Execute (Verify embedded JSON syntax):
+  AssertEqual 'pie', &ft
+  AssertEqual 'pieHttpVerb', SyntaxAt(1, 2)
+  AssertEqual "jsonKeyword", SyntaxAt(3, 5)
+
+"
+" =========================================================
+"
+
+Given pie (Header with value):
+  Header: value
+
+Execute (Verify embedded JSON syntax):
+  AssertEqual 'pieHttpHeaderKey', SyntaxAt(2)
+  AssertEqual 'pieHttpHeaderValue', SyntaxAt(10)
+
