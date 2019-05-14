@@ -1,3 +1,5 @@
+set commentstring=#\ %s
+
 func! s:mapPlug(mode, defaultMapping, plugName)
     if !hasmapto(a:plugName, a:mode) && !mapcheck(a:defaultMapping, a:mode)
         exe a:mode . 'map <buffer>' a:defaultMapping a:plugName
