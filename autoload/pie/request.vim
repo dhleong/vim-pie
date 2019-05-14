@@ -5,11 +5,11 @@ func! s:OnEnterTermBuffer()
 
     " NOTE: the extra i\<bs> above ensures we're properly focused,
     " and works around an apparent vim bug where the *second* time
-    " we enter the buffer like this the normal mode seems to be empty
+    " we enter the buffer like this the normal mode appears empty
 
-    " NOTE: it'd be nice to jump to the top like this, but vim seems
+    " NOTE: if we don't use a delay like this, vim seems
     " to get stuck in a weird 'input pending'-like mode
-    " call feedkeys("gg", 'n')
+    call timer_start(1, { -> feedkeys("gg", 'n') })
 endfunc
 
 func! s:OnLeaveTermBuffer()
