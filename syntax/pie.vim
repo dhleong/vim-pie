@@ -21,7 +21,7 @@ syntax match pieVarIdentifier "$\h\w\+" nextgroup=pieVarAssignment skipwhite
 syntax match pieVarAssignment "=" contained nextgroup=jsonString,pieNumber skipwhite
 syntax match pieNumber "[1-9]\d*" contained
 
-syntax region pieJsonObjectBody start="{\@=" end="}\@=" contains=@json
+syntax region pieJsonObjectBody start="{\@=" end="}\@<=" contains=@json
 
 syntax match pieComment "\v#.*$"
 
