@@ -41,3 +41,27 @@ Execute (Verify embedded JSON syntax):
   AssertEqual 'pieHttpHeaderKey', SyntaxAt(2)
   AssertEqual 'pieHttpHeaderValue', SyntaxAt(10)
 
+"
+" =========================================================
+"
+
+Given pie (String variable assignment):
+  $foo = "bar"
+
+Execute (Verify embedded JSON syntax):
+  AssertEqual 'pieVarIdentifier', SyntaxAt(1)
+  AssertEqual 'pieVarIdentifier', SyntaxAt(2)
+  AssertEqual 'jsonString', SyntaxAt(9)
+
+"
+" =========================================================
+"
+
+Given pie (Number variable assignment):
+  $foo = 42
+
+Execute (Verify embedded JSON syntax):
+  AssertEqual 'pieVarIdentifier', SyntaxAt(1)
+  AssertEqual 'pieVarIdentifier', SyntaxAt(2)
+  AssertEqual 'pieNumber', SyntaxAt(9)
+

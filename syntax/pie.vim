@@ -14,16 +14,24 @@ syntax match pieHttpHeaderKey "\v\w[^:]+:" contained nextgroup=pieHttpHeaderValu
 syntax keyword pieHttpVerb GET POST PATCH PUT HEAD DELETE nextgroup=pieHttpPath skipwhite
 
 syntax match pieHttpTopLevel "^" nextgroup=pieHttpHeaderKey
-syntax match pieEnv "^@\w\+:" nextgroup=pieEnvValue skipnl
+syntax match pieEnv "^@\h\w\+:" nextgroup=pieEnvValue skipnl
 syntax match pieEnvValue "^\s\+" contained nextgroup=pieHttpHeaderKey skipnl
 
+syntax match pieVarIdentifier "$\h\w\+" nextgroup=pieVarAssignment skipwhite
+syntax match pieVarAssignment "=" contained nextgroup=jsonString,pieNumber skipwhite
+syntax match pieNumber "[1-9]\d*" contained
+
 syntax region pieJsonObjectBody start="{\@=" end="}\@=" contains=@json
+
 syntax match pieComment "\v#.*$"
 
-hi link pieComment Comment
-hi link pieEnv Type
+hi default link pieComment Comment
+hi default link pieEnv Type
 
-hi link pieHttpVerb Define
-hi link pieHttpPath String
-hi link pieHttpHeaderKey Label
-hi link pieHttpHeaderValue Constant
+hi default link pieVarIdentifier Identifier
+hi default link pieNumber Number
+
+hi default link pieHttpVerb Define
+hi default link pieHttpPath String
+hi default link pieHttpHeaderKey Label
+hi default link pieHttpHeaderValue Constant
