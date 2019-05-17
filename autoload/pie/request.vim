@@ -1,4 +1,4 @@
-func! s:OnEnterTermBuffer()
+func! s:OnEnterTermBuffer() " {{{
 
     " enter term-normal mode immediately
     call feedkeys("i\<bs>\<c-w>N", 'n')
@@ -10,14 +10,14 @@ func! s:OnEnterTermBuffer()
     " NOTE: if we don't use a delay like this, vim seems
     " to get stuck in a weird 'input pending'-like mode
     call timer_start(1, { -> feedkeys("gg", 'n') })
-endfunc
+endfunc " }}}
 
-func! s:OnLeaveTermBuffer()
+func! s:OnLeaveTermBuffer() " {{{
     " return to term-job mode
     silent! normal i
-endfunc
+endfunc " }}}
 
-func! s:OnLeavePieBufWin()
+func! s:OnLeavePieBufWin() " {{{
     let termBufNr = get(b:, '_pie_output_buf', -1)
     if termBufNr == -1
         " nothing to do
@@ -29,9 +29,9 @@ func! s:OnLeavePieBufWin()
     if job != v:null
         call job_stop(job, 'int')
     endif
-endfunc
+endfunc " }}}
 
-func! pie#request#RunAt(lineNr)
+func! pie#request#RunAt(lineNr) " {{{
     let file = expand('%:p')
     let line = a:lineNr
     let cmd = 'node-pie daemon'
@@ -44,8 +44,8 @@ func! pie#request#RunAt(lineNr)
         let mainBufNr = bufnr('%')
         let mainWinNr = bufwinnr(mainBufNr)
 
-        " TODO:
-        vsplit
+        " open a new window for the term
+        call pie#win#Open()
 
         let termBufNr = term_start(cmd, {
             \ 'curwin': 1,
@@ -77,8 +77,8 @@ func! pie#request#RunAt(lineNr)
     endif
     call ch_sendraw(job, json_encode({ 'file': file, 'line': line }) . "\n")
 
-endfunc
+endfunc " }}}
 
-func! pie#request#RunUnderCursor()
+func! pie#request#RunUnderCursor() " {{{
     call pie#request#RunAt(line('.'))
-endfunc
+endfunc " }}}
