@@ -31,9 +31,7 @@ func! s:OnLeavePieBufWin() " {{{
     endif
 endfunc " }}}
 
-func! pie#request#RunAt(lineNr) " {{{
-    let file = expand('%:p')
-    let line = a:lineNr
+func! s:GetTermJob() " {{{
     let cmd = 'node-pie daemon'
 
     " reuse an existing buffer/process
@@ -70,13 +68,41 @@ func! pie#request#RunAt(lineNr) " {{{
         au BufWinLeave <buffer> call s:OnLeavePieBufWin()
     endif
 
-    let job = term_getjob(termBufNr)
+    return term_getjob(termBufNr)
+endfunc " }}}
+
+func! s:BuildRequestAt(lineNr) " {{{
+    let line = a:lineNr
+
+    if !&modified
+        let file = expand('%:p')
+        return { 'file': file, 'line': line }
+    endif
+
+    " If modified, we have to send the whole buffer. Future work could
+    " try to guess where the request under this line ends to avoid
+    " sending unnecessary stuff, but this is safer for now:
+
+    return {
+        \ 'lines': getline(1, '$'),
+        \ 'line': line,
+        \ }
+endfunc " }}}
+
+func! pie#request#RunAt(lineNr) " {{{
+    let job = s:GetTermJob()
     if job == v:null
         echo "Error: no job"
         return
     endif
-    call ch_sendraw(job, json_encode({ 'file': file, 'line': line }) . "\n")
 
+    let request = s:BuildRequestAt(a:lineNr)
+    if !has_key(request, 'line')
+        echo "Unable to create request"
+        return
+    endif
+
+    call ch_sendraw(job, json_encode(request) . "\n")
 endfunc " }}}
 
 func! pie#request#RunUnderCursor() " {{{
