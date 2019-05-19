@@ -15,7 +15,7 @@ syntax keyword pieHttpVerb GET POST PATCH PUT HEAD DELETE nextgroup=pieHttpPath 
 
 syntax match pieHttpTopLevel "^" nextgroup=pieHttpHeaderKey
 syntax match pieEnv "^@\h\w\+:" nextgroup=pieEnvValue skipnl
-syntax match pieEnvValue "^\s\+" contained nextgroup=pieHttpHeaderKey skipnl
+syntax match pieEnvValue "^\s\+" nextgroup=pieHttpHeaderKey,pieVarAssignment skipnl
 
 syntax match pieVarIdentifier "$\h\w\+" nextgroup=pieVarAssignment skipwhite
 syntax match pieVarAssignment "=" contained nextgroup=jsonString,pieNumber skipwhite

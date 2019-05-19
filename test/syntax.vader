@@ -78,3 +78,16 @@ Execute (Verify embedded JSON syntax):
   AssertEqual 'pieVarIdentifier', SyntaxAt(2)
   AssertEqual 'pieNumber', SyntaxAt(9)
 
+"
+" =========================================================
+"
+
+Given pie (Vars in environment):
+  @serenity:
+    $captain = "mreynolds"
+    X-Type: firefly
+
+Execute (Verify embedded JSON syntax):
+  AssertEqual 'pieEnv', SyntaxAt(1)
+  AssertEqual 'pieVarIdentifier', SyntaxAt(2, 3)
+  AssertEqual 'pieHttpHeaderKey', SyntaxAt(3, 3)
