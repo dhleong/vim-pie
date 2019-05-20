@@ -26,12 +26,12 @@ syntax region pieJsonObjectBody start="{\@=" end="}\@<=" contains=@json
 syntax match pieComment "\v#.*$"
 
 hi default link pieComment Comment
-hi default link pieEnv Type
+hi default link pieEnv Structure
 
 hi default link pieVarIdentifier Identifier
 hi default link pieNumber Number
 
 hi default link pieHttpVerb Define
-hi default link pieHttpPath String
+hi default link pieHttpPath Character
 hi default link pieHttpHeaderKey Label
 hi default link pieHttpHeaderValue Constant
