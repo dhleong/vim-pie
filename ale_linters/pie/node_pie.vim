@@ -13,6 +13,15 @@ func! ale_linters#pie#node_pie#Handle(buffer, lines) abort
         \   'col': l:error.column,
         \}
 
+        if has_key(l:error, 'endColumn')
+            let l:item.end_col = l:error.endColumn
+        endif
+
+        if has_key(l:error, 'endLine')
+            let l:item.end_lnum = l:error.endLine
+        endif
+
+
         call add(l:output, l:item)
     endfor
 
