@@ -81,12 +81,28 @@ func! s:BuildRequestAt(lineNr) " {{{
 
     " If modified, we have to send the whole buffer. Future work could
     " try to guess where the request under this line ends to avoid
-    " sending unnecessary stuff, but this is safer for now:
+    " sending unnecessary stuff, but this is safer for now.
+    " Since Vim hangs when the pipe buffer is full, we can't actually
+    " send the buffer for even somewhat long files; instead we have to
+    " write the buffer to a tmp file.
+    " If job_start() could write the ANSI color to a normal buffer this
+    " wouldn't be a problem...
+
+    let tmp = tempname()
+    call writefile(getline(1, '$'), tmp)
 
     return {
-        \ 'lines': getline(1, '$'),
+        \ 'file': tmp,
         \ 'line': line,
         \ }
+endfunc " }}}
+
+func! s:SendToJob(job, jsonable) " {{{
+    let job = a:job
+
+    let encoded = json_encode(a:jsonable)
+
+    call ch_sendraw(job, encoded . "\n")
 endfunc " }}}
 
 func! pie#request#RunAt(lineNr) " {{{
@@ -102,7 +118,7 @@ func! pie#request#RunAt(lineNr) " {{{
         return
     endif
 
-    call ch_sendraw(job, json_encode(request) . "\n")
+    call s:SendToJob(job, request)
 endfunc " }}}
 
 func! pie#request#RunUnderCursor() " {{{
