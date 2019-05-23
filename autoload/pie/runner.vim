@@ -1,3 +1,5 @@
+" Daemon-based runner {{{
+
 func! s:OnEnterTermBuffer() " {{{
 
     " enter term-normal mode immediately
@@ -79,7 +81,7 @@ func! s:SendToJob(job, jsonable) " {{{
     call ch_sendraw(job, encoded . "\n")
 endfunc " }}}
 
-func! pie#runner#Get()
+func! s:GetDaemonRunner() " {{{
     let job = s:GetTermJob()
     if job == v:null
         throw "Error: no job"
@@ -91,4 +93,73 @@ func! pie#runner#Get()
     endfunc
 
     return runner
+endfunc " }}}
+
+" }}}
+
+func! s:InOutputWindow(Block) " {{{
+    " reuse an existing buffer/process
+    let termBufNr = get(b:, '_pie_output_buf', -1)
+    let termWinNr = bufwinnr(termBufNr)
+
+    let mainBufNr = bufnr('%')
+    let mainWinNr = bufwinnr(mainBufNr)
+
+    if termWinNr == -1
+        " open a new window for the term
+        call pie#win#Open()
+        enew
+
+        let termBufNr = bufnr('%')
+        call setbufvar(mainBufNr, '_pie_output_buf', termBufNr)
+
+        setlocal nobuflisted
+
+    else
+        " switch to the term window
+        exe termWinNr . 'wincmd w'
+    endif
+
+    " execute our block
+    call a:Block()
+
+    " if the bufnr changed, update it
+    call setbufvar(mainBufNr, '_pie_output_buf', bufnr('%'))
+
+    " switch back to the main window
+    exe mainWinNr . 'wincmd w'
+endfunc " }}}
+
+func! s:StartSimpleTerm(file, line)
+    let cmd = 'node-pie exec ' . a:file . ' ' . a:line
+    call term_start(cmd, {
+        \ 'curwin': 1,
+        \ 'out_modifiable': 0,
+        \ 'norestore': 1,
+        \ 'stoponexit': 'int',
+        \ 'term_kill': 'int',
+        \ 'term_name': 'Pie Output',
+        \ })
+endfunc
+
+func! s:RunSimple(file, line) " {{{
+    call s:InOutputWindow({-> s:StartSimpleTerm(a:file, a:line)})
+endfunc " }}}
+
+func! s:GetSimpleRunner()
+
+    let runner = {}
+    func! runner.run(request)
+        call s:RunSimple(a:request.file, a:request.line)
+    endfunc
+
+    return runner
+endfunc
+
+func! pie#runner#Get()
+    " NOTE: the daemon runner doesn't work for long responses,
+    " since there's no way to clear the buffer
+    " return s:GetDaemonRunner()
+
+    return s:GetSimpleRunner()
 endfunc
