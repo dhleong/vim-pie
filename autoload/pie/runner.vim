@@ -131,7 +131,7 @@ func! s:InOutputWindow(Block) " {{{
 endfunc " }}}
 
 func! s:StartSimpleTerm(file, line)
-    let cmd = 'node-pie exec ' . a:file . ' ' . a:line
+    let cmd = 'node-pie exec ' . a:file . ' ' . a:line . ' --spinner'
     call term_start(cmd, {
         \ 'curwin': 1,
         \ 'out_modifiable': 0,
