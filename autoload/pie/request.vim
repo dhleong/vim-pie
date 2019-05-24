@@ -1,5 +1,10 @@
-func! s:BuildRequestAt(lineNr) " {{{
+func! s:BuildRequestAt(a:runner, lineNr) " {{{
     let line = a:lineNr
+
+    if !a:runner.requiresFile
+        " we can just always use the bufnr!
+        return { 'bufnr': bufnr('%'), 'line': line }
+    endif
 
     if !&modified
         let file = expand('%:p')
@@ -18,16 +23,13 @@ func! s:BuildRequestAt(lineNr) " {{{
     let tmp = tempname()
     call writefile(getline(1, '$'), tmp)
 
-    return {
-        \ 'file': tmp,
-        \ 'line': line,
-        \ }
+    return { 'file': tmp, 'line': line }
 endfunc " }}}
 
 func! pie#request#RunAt(lineNr) " {{{
     let runner = pie#runner#Get()
 
-    let request = s:BuildRequestAt(a:lineNr)
+    let request = s:BuildRequestAt(runner, a:lineNr)
     if !has_key(request, 'line')
         echo "Unable to create request"
         return
