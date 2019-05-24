@@ -1,3 +1,13 @@
+func! s:OnEnterTermBuffer()
+    " this is a one-off autocmd!
+    augroup PieOutputWindow
+        autocmd! * <buffer>
+    augroup END
+
+    " jump to the line between the headers and the body
+    normal! gg}
+endfunc
+
 func! s:InOutputWindow(Block) " {{{
     " reuse an existing buffer/process
     let termBufNr = get(b:, '_pie_output_buf', -1)
@@ -26,6 +36,12 @@ func! s:InOutputWindow(Block) " {{{
 
     " if the bufnr changed, update it
     call setbufvar(mainBufNr, '_pie_output_buf', bufnr('%'))
+
+    " set up the one-off on-enter autocmd
+    augroup PieOutputWindow
+        autocmd! * <buffer>
+        autocmd BufEnter <buffer> call s:OnEnterTermBuffer()
+    augroup END
 
     " switch back to the main window
     exe mainWinNr . 'wincmd w'
