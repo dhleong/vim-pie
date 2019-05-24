@@ -1,4 +1,4 @@
-func! s:BuildRequestAt(a:runner, lineNr) " {{{
+func! s:BuildRequestAt(runner, lineNr) " {{{
     let line = a:lineNr
 
     if !a:runner.requiresFile
@@ -31,7 +31,7 @@ func! pie#request#RunAt(lineNr) " {{{
 
     let request = s:BuildRequestAt(runner, a:lineNr)
     if !has_key(request, 'line')
-        echo "Unable to create request"
+        echo 'Unable to create request'
         return
     endif
 
