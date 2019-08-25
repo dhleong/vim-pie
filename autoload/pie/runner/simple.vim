@@ -65,7 +65,7 @@ func! s:StartSimpleTerm(request) " {{{
         let opts.in_io = 'buffer'
         let opts.in_buf = a:request.bufnr
     else
-        throw "Invalid request; must have `file` or `bufnr`"
+        throw 'Invalid request; must have `file` or `bufnr`'
     endif
 
     let cmd .= ' ' . a:request.line . ' --spinner'
