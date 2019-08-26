@@ -7,5 +7,7 @@ func! s:mapPlug(mode, defaultMapping, plugName)
 endfunc
 
 nnoremap <silent> <Plug>PieRun :<C-U>call pie#request#RunUnderCursor()<cr>
+nnoremap <silent> <Plug>PieDebugRun :<C-U>call pie#request#RunUnderCursor({'debug': 1})<cr>
 
 call s:mapPlug('n', '<cr>', '<Plug>PieRun')
+call s:mapPlug('n', '<s-cr>', '<Plug>PieDebugRun')

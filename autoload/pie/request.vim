@@ -26,10 +26,10 @@ func! s:BuildRequestAt(runner, lineNr) " {{{
     return { 'file': tmp, 'line': line }
 endfunc " }}}
 
-func! pie#request#RunAt(lineNr) " {{{
+func! pie#request#RunAt(lineNr, opts) " {{{
     let runner = pie#runner#Get()
 
-    let request = s:BuildRequestAt(runner, a:lineNr)
+    let request = extend(s:BuildRequestAt(runner, a:lineNr), a:opts)
     if !has_key(request, 'line')
         echo 'Unable to create request'
         return
@@ -38,6 +38,7 @@ func! pie#request#RunAt(lineNr) " {{{
     call runner.run(request)
 endfunc " }}}
 
-func! pie#request#RunUnderCursor() " {{{
-    call pie#request#RunAt(line('.'))
+func! pie#request#RunUnderCursor(...) " {{{
+    let opts = a:0 ? a:1 : {}
+    call pie#request#RunAt(line('.'), opts)
 endfunc " }}}

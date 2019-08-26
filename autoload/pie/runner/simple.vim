@@ -57,6 +57,10 @@ func! s:StartSimpleTerm(request) " {{{
         \ 'term_name': 'Pie Output',
         \ }
 
+    if get(a:request, 'debug', 0)
+        let opts.env = { 'DEBUG': 'pie:*' }
+    endif
+
     let cmd = 'node-pie exec '
     if has_key(a:request, 'file')
         let cmd .= a:request.file
