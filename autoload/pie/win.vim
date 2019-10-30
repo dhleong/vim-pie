@@ -10,7 +10,7 @@ func! pie#win#Open() " {{{
 
     let m = matchlist(openCmd, '\v(\d*)(right|top|left|bottom)')
     if !len(m)
-        echoerr "Invalid pie_open_cmd: " . openCmd
+        echoerr 'Invalid pie_open_cmd: ' . openCmd
 
         " fallback to simple vsplit
         vsplit
