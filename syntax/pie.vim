@@ -19,7 +19,7 @@ syntax match pieProcessorId "\h\w\+"  contained skipwhite
 
 syntax keyword pieProcessorVerb PROCESSOR nextgroup=pieProcessorIdentifier skipwhite
 syntax match pieProcessorIdentifier "\h\w\+" nextgroup=pieProcessorBody skipwhite
-syntax region pieProcessorBody matchgroup=pieProcessorFence start="```$\zs" end="\ze^```" keepend contains=@javascript
+syntax region pieProcessorBody matchgroup=pieProcessorFence start="```$" keepend end="^```" contains=@javascript
 
 syntax match pieHttpTopLevel "^" nextgroup=pieHttpHeaderKey
 syntax match pieEnv "^@\h\w\+:" nextgroup=pieEnvValue skipnl
