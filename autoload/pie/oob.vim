@@ -58,6 +58,11 @@ func! pie#oob#HandleMessage(request, message) " {{{
     let kind = a:message[0]
     let payload = a:message[1]
 
+    if payload == v:null
+        " ignore
+        return
+    endif
+
     if has_key(s:events, kind)
         call s:events[kind](a:request, payload)
     endif
