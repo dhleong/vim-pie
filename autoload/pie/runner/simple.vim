@@ -47,6 +47,19 @@ func! s:InOutputWindow(Block) " {{{
     exe mainWinNr . 'wincmd w'
 endfunc " }}}
 
+func! s:handleOOBMessage(request, channel, message) " {{{
+    if stridx(a:message, 'pie:oob') != 0
+        return
+    endif
+
+    let message = json_decode(a:message[len('pie:oob '):])
+    if type(message) != type([])
+        return
+    endif
+
+    call pie#oob#HandleMessage(a:request, message)
+endfunc " }}}
+
 func! s:StartSimpleTerm(request) " {{{
     let opts = {
         \ 'curwin': 1,
@@ -55,7 +68,12 @@ func! s:StartSimpleTerm(request) " {{{
         \ 'stoponexit': 'int',
         \ 'term_kill': 'int',
         \ 'term_name': 'Pie Output',
+        \ 'out_cb': function('s:handleOOBMessage', [a:request]),
         \ }
+
+    " NOTE: the OOB messages are going to stderr, so we *should* be
+    " able to simply get them from from err_cb, but apparently that
+    " doesn't work
 
     if get(a:request, 'debug', 0)
         let opts.env = { 'DEBUG': 'pie:*' }
@@ -72,8 +90,9 @@ func! s:StartSimpleTerm(request) " {{{
         throw 'Invalid request; must have `file` or `bufnr`'
     endif
 
-    let cmd .= ' ' . a:request.line . ' --spinner'
+    let cmd .= ' ' . a:request.line . ' --spinner --oob'
 
+    echom cmd
     call term_start(cmd, opts)
 endfunc " }}}
 
