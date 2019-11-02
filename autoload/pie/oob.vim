@@ -58,7 +58,7 @@ func! pie#oob#HandleMessage(request, message) " {{{
     let kind = a:message[0]
     let payload = a:message[1]
 
-    if payload == v:null
+    if type(payload) == type(v:null) && payload == v:null
         " ignore
         return
     endif
